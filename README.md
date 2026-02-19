@@ -27,6 +27,18 @@ git config submodule.submodules/Isaac-GR00T.url https://github.com/NVIDIA/Isaac-
 git submodule update --init --recursive
 ```
 
+- Install isaaclab_arena in editable mode
+```
+cd IsaacLab-Arena
+pip install -e .  
+```
+
+- Install Isaac Lab and all its modules
+```
+cd submodules/IsaacLab
+./isaaclab.sh --install
+```
+
 - check ``ls -la docker/``. you should see the file ``run_docker.sh``
 
 # install the Nvidia Docker container 
@@ -98,8 +110,10 @@ Input these tests (with the double quotes in the end of each)
 
 # Run Test
 ```
-cd /workspaces/isaaclab_arena
-pytest -sv -m "not with_cameras" isaaclab_arena/tests/
+cd /workspace
+pytest -sv isaaclab_arena/tests/
+
+pytest -sv -m with_cameras isaaclab_arena/tests/
 pytest -sv -m "not with_cameras" isaaclab_arena/tests/
 ```
 
