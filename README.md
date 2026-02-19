@@ -73,10 +73,14 @@ cd ~/IsaacLab-Arena
 nano docker/Dockerfile.isaaclab_arena
 ```
   - Find this line ``RUN ${ISAACLAB_PATH}/isaaclab.sh -i``
-  - Add this line directly after it: ``RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source/isaaclab``
-  - Save file
+  - Add this line directly after it:
+```
+RUN /isaac-sim/python.sh -m pip install --no-build-isolation flatdict==4.0.1
+RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source/isaaclab
+```
+  - Save file with Ctrl O, Exit with Ctrl X
 
-- Go back to Ubuntu terminal, on the base root run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
+- Go back to Ubuntu terminal, outside of the container, and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
 
 # Start Container and check dependencies
 
