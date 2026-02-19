@@ -11,15 +11,11 @@ https://github.com/isaac-sim/IsaacLab-Arena
 - Have Docker Desktop installed and running (open it and let it running on the background): check ``docker info | findstr "Operating System"``. You should see something like: Operating System: Docker Desktop
 - Ubuntu has GPU access: test open Ubuntu and run ``docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu22.04 nvidia-smi``. You should see your GPU info if everything is configured correctly.
 
-# Clone Arena
+# Clone Arena Repo
 -> Open Docker Desktop and let it run on the background
 -> Open an Ubuntu terminal and inside it, do:
 
-
-- Clone repo
-```
-git clone https://github.com/isaac-sim/IsaacLab-Arena.git
-```
+- Run: ``git clone https://github.com/isaac-sim/IsaacLab-Arena.git``
 
 - navigate to folder: ``cd IsaacLab-Arena``
   
@@ -33,7 +29,9 @@ git submodule update --init --recursive
 
 - check ``ls -la docker/``. you should see the file ``run_docker.sh``
 
-- install the Nvidia Docker container ``./docker/run_docker.sh``
+# install the Nvidia Docker container 
+
+- Run ``./docker/run_docker.sh``
 
 This will open the docker config .yaml file that will fetch the right docker image to install a docker container with all necessary dependencies to run Arena
 
@@ -61,20 +59,51 @@ This will open the docker config .yaml file that will fetch the right docker ima
   Starts the container and gives you a terminal inside it
 ```
 
+# Fix Errors
+
+The official docker file from Nvidia installs packages using the `glob` pattern `isaaclab*/` to find the packages to be installed, meaning it searches for "isaaclab" AND whatever comes after this. However, the core `isaaclab` package doesn't have anything after its name and thus never gets installed. And because isaaclab already contains all dependencies and subpackages necessary, none of these dependencies get installed either. Then, every other package that depends on it fails to import.
+
+This fix adds an explicit pip install of isaaclab by its exact path, right after isaaclab.sh -i. Pip installs the package and resolves all its dependencies during the Docker build.
+
+- On your Ubuntu host (not inside a container):
+```
+cd ~/IsaacLab-Arena
+
+# Open file
+nano docker/Dockerfile.isaaclab_arena
+```
+  - Find this line ``RUN ${ISAACLAB_PATH}/isaaclab.sh -i``
+  - Add this line directly after it: ``RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source/isaaclab``
+  - Save file
+
+- Go back to Ubuntu terminal, on the base root run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
+
+# Start Container and check dependencies
+
 - Start a fresh container: ``docker run -it --gpus all --entrypoint bash isaaclab_arena:latest``
+- Navigate to the isaaclab arena folder: ``cd /workspaces/isaaclab_arena``
 
-- Inside the container — install ONLY the missing isaaclab core package. IMPORTANT: Use /isaac-sim/python.sh for all pip operations: ``/isaac-sim/python.sh -m pip install --no-deps -e /workspaces/isaaclab_arena/submodules/IsaacLab/source/isaaclab``
-
-- Verify the fix
+- Verify that all dependencies are installed
 Input these tests (with the double quotes in the end of each)
 ```
-/isaac-sim/python.sh -c "import isaaclab; print('isaaclab OK')"
-/isaac-sim/python.sh -c "import torch; print(f'torch {torch.__version__} OK')"
-/isaac-sim/python.sh -c "import isaaclab_arena; print('arena OK')"
+/isaac-sim/python.sh -c "import isaaclab; print('OK')"
+/isaac-sim/python.sh -c "import warp; print('OK')"
+/isaac-sim/python.sh -c "import pinocchio; print('OK')"
+/isaac-sim/python.sh -c "import torch; print(torch.__version__)"
 ```
 
-- navigate to folder ``cd /workspaces/isaaclab_arena``
+# Run Test
+```
+cd /workspaces/isaaclab_arena
+pytest -sv -m "not with_cameras" isaaclab_arena/tests/
+pytest -sv -m "not with_cameras" isaaclab_arena/tests/
+```
 
+
+# Run first example
+```
+python isaaclab_arena/examples/compile_env_notebook.py
+```
 
 
 
