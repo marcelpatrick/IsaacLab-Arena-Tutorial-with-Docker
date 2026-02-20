@@ -1,10 +1,10 @@
 # IsaacLab-Arena-Tutorial-with-Docker
 
 # Official Documentation 
-https://developer.nvidia.com/blog/simplify-generalist-robot-policy-evaluation-in-simulation-with-nvidia-isaac-lab-arena
-https://isaac-sim.github.io/IsaacLab-Arena/main/index.html
-https://isaac-sim.github.io/IsaacLab-Arena/main/pages/quickstart/installation.html
-https://github.com/isaac-sim/IsaacLab-Arena
+  https://developer.nvidia.com/blog/simplify-generalist-robot-policy-evaluation-in-simulation-with-nvidia-isaac-lab-arena
+  https://isaac-sim.github.io/IsaacLab-Arena/main/index.html
+  https://isaac-sim.github.io/IsaacLab-Arena/main/pages/quickstart/installation.html
+  https://github.com/isaac-sim/IsaacLab-Arena
 
 # Pre-Requisites
 - Have Ubuntu 22.04 installed. check ``wsl --list --verbose``
