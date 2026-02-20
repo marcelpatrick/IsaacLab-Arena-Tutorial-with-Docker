@@ -41,9 +41,24 @@ cd submodules/IsaacLab
 
 - check ``ls -la docker/``. you should see the file ``run_docker.sh``
 
-# install the Nvidia Docker container 
+# Install xhost
+Open your Ubuntu terminal (NOT inside a Docker container — your prompt should show (base)...
+```
+sudo apt-get update
+sudo apt-get install -y x11-xserver-utils
+```
 
-- Run ``./docker/run_docker.sh``
+# Set your Display Variable
+We need to tell the container where to send the graphics via WSLg. Still on the (base) environment type: ``export DISPLAY=:0``
+
+
+# install the Nvidia Docker container 
+Make sure docker desktop is open on the background
+Navigate to the root of the Nvidia Arena repository and install the docker container.
+```
+cd ~/IsaacLab-Arena
+./docker/run_docker.sh
+```
 
 This will open the docker config .yaml file that will fetch the right docker image to install a docker container with all necessary dependencies to run Arena
 
@@ -92,7 +107,7 @@ RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source
 ```
   - Save file with Ctrl O, Exit with Ctrl X
 
-- Go back to Ubuntu terminal, outside of the container, and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
+- Go back to Ubuntu terminal, outside of the container (type `exit`), and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
 
 # Start Container and check dependencies
 
