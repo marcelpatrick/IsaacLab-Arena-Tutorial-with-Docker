@@ -1,5 +1,9 @@
 # IsaacLab-Arena-Tutorial-with-Docker
 
+# WARNING: 
+- This implementation only works on native Linux
+- If you are running on windows, even on Ubuntu/WSL/WSL2, it will not work because the Ubuntu container won't be able to access Vulkan (the graphics rendering application). 
+
 # Official Documentation 
 1. https://developer.nvidia.com/blog/simplify-generalist-robot-policy-evaluation-in-simulation-with-nvidia-isaac-lab-arena
 2. https://isaac-sim.github.io/IsaacLab-Arena/main/index.html
