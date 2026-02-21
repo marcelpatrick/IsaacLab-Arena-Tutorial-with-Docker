@@ -11,13 +11,11 @@
 4. https://github.com/isaac-sim/IsaacLab-Arena
 
 # Pre-Requisites
-- Have Ubuntu 22.04 installed. check ``wsl --list --verbose``
 - Have Docker Desktop installed and running (open it and let it running on the background): check ``docker info | findstr "Operating System"``. You should see something like: Operating System: Docker Desktop
-- Ubuntu has GPU access: test open Ubuntu and run ``docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu22.04 nvidia-smi``. You should see your GPU info if everything is configured correctly.
 
 # Clone Arena Repo
 -> Open Docker Desktop and let it run on the background
--> Open an Ubuntu terminal and inside it, do:
+-> Open your linux terminal and 
 
 - Run: ``git clone https://github.com/isaac-sim/IsaacLab-Arena.git``
 
@@ -46,7 +44,7 @@ cd submodules/IsaacLab
 - check ``ls -la docker/``. you should see the file ``run_docker.sh``
 
 # Install xhost
-Open your Ubuntu terminal (NOT inside a Docker container — your prompt should show (base)...
+Open your terminal on the root path (NOT inside a Docker container)...
 ```
 sudo apt-get update
 sudo apt-get install -y x11-xserver-utils
@@ -62,7 +60,7 @@ The official docker file from Nvidia installs packages using the `glob` pattern 
 
 This fix adds an explicit pip install of isaaclab by its exact path, right after isaaclab.sh -i. Pip installs the package and resolves all its dependencies during the Docker build.
 
-- On your Ubuntu host (not inside a container):
+- On your terminal host (not inside a container):
 ```
 cd ~/IsaacLab-Arena
 
@@ -122,7 +120,7 @@ This will open the docker config .yaml file that will fetch the right docker ima
   Starts the container and gives you a terminal inside it
 ```
 
-- Go back to Ubuntu terminal, outside of the container (type `exit`), and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
+- Go back to terminal, outside of the container (type `exit`), and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
 
 
 # Start Container and check dependencies
