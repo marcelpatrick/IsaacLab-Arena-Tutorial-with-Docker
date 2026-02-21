@@ -1,4 +1,4 @@
-# IsaacLab-Arena-Tutorial-with-Docker
+# IsaacLab-Arena-Installation-on-Linux-Docker
 
 # WARNING: 
 - This implementation only works on native Linux
