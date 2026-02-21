@@ -52,6 +52,38 @@ sudo apt-get install -y x11-xserver-utils
 We need to tell the container where to send the graphics via WSLg. Still on the (base) environment type: ``export DISPLAY=:0``
 
 
+# Fix Errors
+
+The official docker file from Nvidia installs packages using the `glob` pattern `isaaclab*/` to find the packages to be installed, meaning it searches for "isaaclab" AND whatever comes after this. However, the core `isaaclab` package doesn't have anything after its name and thus never gets installed. And because isaaclab already contains all dependencies and subpackages necessary, none of these dependencies get installed either. Then, every other package that depends on it fails to import.
+
+This fix adds an explicit pip install of isaaclab by its exact path, right after isaaclab.sh -i. Pip installs the package and resolves all its dependencies during the Docker build.
+
+- On your Ubuntu host (not inside a container):
+```
+cd ~/IsaacLab-Arena
+
+Open file
+nano docker/Dockerfile.isaaclab_arena
+```
+  - Find this line ``RUN ${ISAACLAB_PATH}/isaaclab.sh -i``
+  - Add this line directly after it:
+```
+RUN /isaac-sim/python.sh -m pip install --no-build-isolation flatdict==4.0.1
+RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source/isaaclab
+```
+  - Save file with Ctrl O, Exit with Ctrl X
+
+```
+Open file
+nano docker/setup/entrypoint.sh
+```
+Add `` || true`` after ``groupadd ... "$DOCKER_RUN_GROUP_NAME"``
+
+Add `` || true`` after ``useradd ... "$DOCKER_RUN_USER_NAME"``
+
+  - Save file with Ctrl O, Exit with Ctrl X
+
+
 # install the Nvidia Docker container 
 Make sure docker desktop is open on the background
 Navigate to the root of the Nvidia Arena repository and install the docker container.
@@ -86,28 +118,8 @@ This will open the docker config .yaml file that will fetch the right docker ima
   Starts the container and gives you a terminal inside it
 ```
 
-# Fix Errors
-
-The official docker file from Nvidia installs packages using the `glob` pattern `isaaclab*/` to find the packages to be installed, meaning it searches for "isaaclab" AND whatever comes after this. However, the core `isaaclab` package doesn't have anything after its name and thus never gets installed. And because isaaclab already contains all dependencies and subpackages necessary, none of these dependencies get installed either. Then, every other package that depends on it fails to import.
-
-This fix adds an explicit pip install of isaaclab by its exact path, right after isaaclab.sh -i. Pip installs the package and resolves all its dependencies during the Docker build.
-
-- On your Ubuntu host (not inside a container):
-```
-cd ~/IsaacLab-Arena
-
-# Open file
-nano docker/Dockerfile.isaaclab_arena
-```
-  - Find this line ``RUN ${ISAACLAB_PATH}/isaaclab.sh -i``
-  - Add this line directly after it:
-```
-RUN /isaac-sim/python.sh -m pip install --no-build-isolation flatdict==4.0.1
-RUN /isaac-sim/python.sh -m pip install -e ${WORKDIR}/submodules/IsaacLab/source/isaaclab
-```
-  - Save file with Ctrl O, Exit with Ctrl X
-
 - Go back to Ubuntu terminal, outside of the container (type `exit`), and run: ``docker build --no-cache -t isaaclab_arena:latest -f docker/Dockerfile.isaaclab_arena .``
+
 
 # Start Container and check dependencies
 
